@@ -1,0 +1,11 @@
+@media (min-width: 992px) {
+  .aside .aside-primary {
+    width: 70px !important;
+  }
+}
+@media (min-width: 992px) {
+  .aside-secondary-enabled .aside {
+    width: 380px !important;
+  }
+}
+  
