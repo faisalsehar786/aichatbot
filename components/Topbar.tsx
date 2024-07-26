@@ -45,18 +45,18 @@ export default function Topbar() {
     if (user?.avatar_url) downloadImage(user?.avatar_url)
   }, [user?.avatar_url, supabase])
 
-  useEffect(() => {
-    const handleClickOutside = (event: any) => {
-      if (dropdownRef.current) {
-        setIsOpen(false)
-      }
-    }
+  // useEffect(() => {
+  //   const handleClickOutside = (event: any) => {
+  //     if (dropdownRef.current) {
+  //       setIsOpen(false)
+  //     }
+  //   }
 
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [])
+  //   document.addEventListener('mousedown', handleClickOutside)
+  //   return () => {
+  //     document.removeEventListener('mousedown', handleClickOutside)
+  //   }
+  // }, [])
   const handleLogout = async () => {
     await supabase.auth.signOut()
     setUser(null)
