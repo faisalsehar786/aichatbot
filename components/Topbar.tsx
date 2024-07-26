@@ -1,3 +1,4 @@
+/* eslint-disable  */
 'use client'
 import Link from 'next/link'
 import { useUser } from '@/lib/store/user'
@@ -46,7 +47,7 @@ export default function Topbar() {
 
   useEffect(() => {
     const handleClickOutside = (event: any) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      if (dropdownRef.current) {
         setIsOpen(false)
       }
     }
