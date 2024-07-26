@@ -1,169 +1,173 @@
-import Layout from './../components/Layout';
-
+'use client'
+import Layout from './../components/Layout'
+import React from 'react'
+import { useTheme } from '@/context/ThemeContext'
 export default function Home() {
+  const { ai_version, setVersion } = useTheme()
+  const gptModel = ['gpt-3.5-turbo', 'gpt-4']
+
   return (
     <Layout>
-      <div className="menu menu-sub menu-sub-dropdown menu-column w-100 show mb-5">
-        <div
-          className="d-flex flex-column flex-center  rounded-top px-9 py-10"
-          style={{
-            backgroundImage: 'url("assets/media/misc/dropdown-header-bg.png")'
-          }}
-        >
-      
-        </div>
-        <div className="row g-0">
-          <div className="col-6">
-            <a
-              href="apps/projects/budget.html"
-              className="d-flex flex-column flex-center h-100 p-6 bg-hover-light border-end border-bottom"
-            >
-              <i className="ki-duotone ki-dollar fs-3x text-primary mb-2">
-                <span className="path1" />
-                <span className="path2" />
-                <span className="path3" />
-              </i>
-              <span className="fs-5 fw-semibold text-gray-800 mb-0">
-                Accounting
-              </span>
-              <span className="fs-7 text-gray-500">eCommerce</span>
-            </a>
+      <div className='h-[calc(100vh-190px)] overflow-y-auto hide__scroll__bar px-1'>
+        <section className=' items-center justify-center  py-6 md:-0 px-2 text-white'>
+          <div className='mx-auto  w-fit  tabs tabs-boxed mt-20 pt-10'>
+            <span className='badge badge-primary fs-7 fw-semibold'>
+              ✨ Wellcome to ai mangement system{' '}
+            </span>
           </div>
-          <div className="col-6">
-            <a
-              href="apps/projects/settings.html"
-              className="d-flex flex-column flex-center h-100 p-6 bg-hover-light border-bottom"
-            >
-              <i className="ki-duotone ki-sms fs-3x text-primary mb-2">
-                <span className="path1" />
-                <span className="path2" />
-              </i>
-              <span className="fs-5 fw-semibold text-gray-800 mb-0">
-                Administration
-              </span>
-              <span className="fs-7 text-gray-500">Console</span>
-            </a>
-          </div>
-          <div className="col-6">
-            <a
-              href="apps/projects/list.html"
-              className="d-flex flex-column flex-center h-100 p-6 bg-hover-light border-end"
-            >
-              <i className="ki-duotone ki-abstract-41 fs-3x text-primary mb-2">
-                <span className="path1" />
-                <span className="path2" />
-              </i>
-              <span className="fs-5 fw-semibold text-gray-800 mb-0">
-                Projects
-              </span>
-              <span className="fs-7 text-gray-500">Pending Tasks</span>
-            </a>
-          </div>
-          <div className="col-6">
-            <a
-              href="apps/projects/users.html"
-              className="d-flex flex-column flex-center h-100 p-6 bg-hover-light"
-            >
-              <i className="ki-duotone ki-briefcase fs-3x text-primary mb-2">
-                <span className="path1" />
-                <span className="path2" />
-              </i>
-              <span className="fs-5 fw-semibold text-gray-800 mb-0">
-                Customers
-              </span>
-              <span className="fs-7 text-gray-500">Latest cases</span>
-            </a>
-          </div>
-        </div>
-        <div className="py-2 text-center border-top">
-          <a
-            href="pages/user-profile/activity.html"
-            className="btn btn-color-gray-600 btn-active-color-primary"
-          >
-            View All
-            <i className="ki-duotone ki-arrow-right fs-5">
-              <span className="path1" />
-              <span className="path2" />
-            </i>
-          </a>
-        </div>
-      </div>
 
-      <div className="scroll-y me-n5 pe-5  h-lg-auto">
-        <div className=" justify-content-start mb-10">
-          <div className="d-flex flex-column align-items-start">
-            <div className="d-flex align-items-center mb-2">
-              <div className="symbol symbol-35px symbol-circle">
-                <img alt="Pic" src="assets/media/logos/demo7.svg" />
+          <div className='mx-auto   w-fit'>
+            <div className='d-flex align-items-center  my-20'>
+              <div className='symbol symbol-50px me-5'>
+                <img src='assets/media/logos/ai.webp' className='' alt='' />
               </div>
-              <div className="ms-3">
-                <a
-                  href="#"
-                  className="fs-5 fw-bold text-gray-900 text-hover-primary me-1"
-                >
+              <div className='flex-grow-1'>
+                <h2 className=' text-hover-primary mb-0' style={{ fontSize: '3rem' }}>
                   Ai Chat Bot
-                </a>
-                <span className="text-muted fs-7 mb-1">2 mins</span>
+                </h2>
               </div>
-            </div>
-            <div
-              className="p-5 rounded bg-light-info text-gray-900 fw-semibold w-100 text-start"
-              data-kt-element="message-text"
-            >
-              How likely are you to recommend our company to your friends and
-              family ?
             </div>
           </div>
-        </div>
-        <div className="d-flex justify-content-end mb-10">
-          <div className="d-flex flex-column align-items-end">
-            <div className="d-flex align-items-center mb-2">
-              <div className="me-3">
-                <span className="text-muted fs-7 mb-1">5 mins</span>
-                <a
-                  href="#"
-                  className="fs-5 fw-bold text-gray-900 text-hover-primary ms-1"
-                >
-                  You
-                </a>
-              </div>
-              <div className="symbol symbol-35px symbol-circle">
-                <img alt="Pic" src="assets/media/avatars/300-1.jpg" />
-              </div>
-            </div>
-            <div
-              className="p-5 rounded bg-light-primary text-gray-900 fw-semibold mw-lg-600px text-end"
-              data-kt-element="message-text"
-            >
-              Hey there, we’re just writing to let you know that you’ve been
-              subscribed to a repository on GitHub.
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <div className="card-footer pt-4">
-        <div className="row">
-          <div className="col-11">
-            <textarea
-              className="form-control form-control-lg form-control-solid mb-3"
-              rows={2}
-              data-kt-element="input"
-              placeholder="Type a message"
-              defaultValue={''}
-            />
+          <div className='row '>
+            <div className='col-lg-4 col-md-6'>
+              <div className='me-md-5 w-100'>
+                <div className='d-flex border border-gray-300 border-dashed rounded p-6 mb-6 h-80px'>
+                  <div className='d-flex align-items-center flex-grow-1 me-2 me-sm-5'>
+                    <div className='symbol symbol-50px me-4'>
+                      <span className='symbol-label'>
+                        <i className='ki-duotone ki-timer fs-2qx text-primary'>
+                          <span className='path1' />
+                          <span className='path2' />
+                          <span className='path3' />
+                        </i>
+                      </span>
+                    </div>
+                    <div className='me-2'>
+                      <a href='#' className='text-gray-800 text-hover-primary fs-6 fw-bold'>
+                        Attendance
+                      </a>
+                      <span className='text-gray-500 fw-bold d-block fs-7'>Great, you always</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className='d-flex border border-gray-300 border-dashed rounded p-6 mb-6 h-80px'>
+                  <div className='d-flex align-items-center flex-grow-1 me-2 me-sm-5'>
+                    <div className='symbol symbol-50px me-4'>
+                      <span className='symbol-label'>
+                        <i className='ki-duotone ki-abstract-24 fs-2qx text-primary'>
+                          <span className='path1' />
+                          <span className='path2' />
+                        </i>
+                      </span>
+                    </div>
+                    <div className='me-2'>
+                      <a href='#' className='text-gray-800 text-hover-primary fs-6 fw-bold'>
+                        Tests
+                      </a>
+                      <span className='text-gray-500 fw-bold d-block fs-7'>
+                        You take 12 subjects
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className='col-lg-4 col-md-6'>
+              <div className='me-md-5 w-100'>
+                <div className='d-flex border border-gray-300 border-dashed rounded p-6 mb-6 h-80px'>
+                  <div className='d-flex align-items-center flex-grow-1 me-2 me-sm-5'>
+                    <div className='symbol symbol-50px me-4'>
+                      <span className='symbol-label'>
+                        <i className='ki-duotone ki-timer fs-2qx text-primary'>
+                          <span className='path1' />
+                          <span className='path2' />
+                          <span className='path3' />
+                        </i>
+                      </span>
+                    </div>
+                    <div className='me-2'>
+                      <a href='#' className='text-gray-800 text-hover-primary fs-6 fw-bold'>
+                        Attendance
+                      </a>
+                      <span className='text-gray-500 fw-bold d-block fs-7'>Great, you always</span>
+                    </div>
+                  </div>
+                </div>
+                <div className='d-flex border border-gray-300 border-dashed rounded p-6 mb-6 h-80px'>
+                  <div className='d-flex align-items-center flex-grow-1 me-2 me-sm-5'>
+                    <div className='symbol symbol-50px me-4'>
+                      <span className='symbol-label'>
+                        <i className='ki-duotone ki-element-11 fs-2qx text-primary'>
+                          <span className='path1' />
+                          <span className='path2' />
+                          <span className='path3' />
+                          <span className='path4' />
+                        </i>
+                      </span>
+                    </div>
+                    <div className='me-2'>
+                      <a href='#' className='text-gray-800 text-hover-primary fs-6 fw-bold'>
+                        Homeworks
+                      </a>
+                      <span className='text-gray-500 fw-bold d-block fs-7'>
+                        Don’t forget to turn in your task
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className='col-lg-4 col-md-6'>
+              <div className='me-md-5 w-100'>
+                <div className='d-flex border border-gray-300 border-dashed rounded p-6 mb-6 h-80px'>
+                  <div className='d-flex align-items-center flex-grow-1 me-2 me-sm-5'>
+                    <div className='symbol symbol-50px me-4'>
+                      <span className='symbol-label'>
+                        <i className='ki-duotone ki-element-11 fs-2qx text-primary'>
+                          <span className='path1' />
+                          <span className='path2' />
+                          <span className='path3' />
+                          <span className='path4' />
+                        </i>
+                      </span>
+                    </div>
+                    <div className='me-2'>
+                      <a href='#' className='text-gray-800 text-hover-primary fs-6 fw-bold'>
+                        Homeworks
+                      </a>
+                      <span className='text-gray-500 fw-bold d-block fs-7'>
+                        Don’t forget to turn
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className='d-flex border border-gray-300 border-dashed rounded p-6 mb-6 h-80px'>
+                  <div className='d-flex align-items-center flex-grow-1 me-2 me-sm-5'>
+                    <div className='symbol symbol-50px me-4'>
+                      <span className='symbol-label'>
+                        <i className='ki-duotone ki-abstract-24 fs-2qx text-primary'>
+                          <span className='path1' />
+                          <span className='path2' />
+                        </i>
+                      </span>
+                    </div>
+                    <div className='me-2'>
+                      <a href='#' className='text-gray-800 text-hover-primary fs-6 fw-bold'>
+                        Tests
+                      </a>
+                      <span className='text-gray-500 fw-bold d-block fs-7'>
+                        You take 12 subjects at this semeste
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="col-1 m-auto">
-            <button
-              className="btn btn-sm btn-outline btn-outline btn-outline-primary"
-              type="button"
-              data-kt-element="send"
-            >
-              <i className="fa fa-paper-plane" aria-hidden="true" />
-            </button>
-          </div>
-        </div>
+        </section>
       </div>
     </Layout>
-  );
+  )
 }

@@ -1,46 +1,30 @@
-'use server'
+"use server";
+import { createSupabaseServerClient } from "@/lib/supabase";
+export async function signUpWithEmailAndPassword({
+  data,
+  emailRedirectTo,
+}: {
+  data: any;
+  emailRedirectTo?: string;
+}) {
+  const supabase = await createSupabaseServerClient();
+  const result = await supabase.auth.signUp({
+    email: data.email,
+    password: data.password,
+    options: {
+      emailRedirectTo,
+    },
+  });
 
-import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
-
-import { createClient } from '@/utils/supabase/server'
-
-export async function login(formData: FormData) {
-  const supabase = createClient()
-
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
-  const data = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
-  }
-
-  const { error } = await supabase.auth.signInWithPassword(data)
-
-  if (error) {
-    redirect('/error')
-  }
-
-  revalidatePath('/', 'layout')
-  redirect('/account')
+  return JSON.stringify(result)
 }
 
-export async function signup(formData: FormData) {
-  const supabase = createClient()
-
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
-  const data = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
-  }
-
-  const { error } = await supabase.auth.signUp(data)
-
-  if (error) {
-    redirect('/error')
-  }
-
-  revalidatePath('/', 'layout')
-  redirect('/account')
+export async function signInWithEmailAndPassword(data: any) {
+  const supabase = await createSupabaseServerClient();
+  const result = await supabase.auth.signInWithPassword({
+    email: data.email,
+    password: data.password,
+  });
+  return JSON.stringify(result)
 }
+   

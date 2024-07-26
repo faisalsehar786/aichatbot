@@ -8,4 +8,234 @@
     width: 380px !important;
   }
 }
+
+.react-select-container .react-select__single-value,
+.react-select__placeholder {
+  color: #ffff !important;
+}
+
+.react-select-container .react-select__indicator.react-select__dropdown-indicator {
+  color: #ffff !important;
+}
+
+.react-select-container .react-select__menu {
+  background-color: #1b1c22 !important;
+}
+.react-select-container .react-select__control:hover {
+  border-color: #36384300 !important;
+}
+.react-select-container .react-select__indicator-separator {
+  display: none;
+}
+
+.react-select-container .react-select__control {
+  border-color: #36384300 !important;
+}
+.w-99 {
+  width: 99%;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  .bg-primary {
+    background-color: #343541;
+  }
+
+  .red {
+    border: 2px solid red;
+  }
+  .green {
+    border: 2px solid green;
+  }
+  .blue {
+    border: 2px solid blue;
+  }
+}
+
+@layer components {
+  .infoText {
+    @apply p-4 bg-gray-700 opacity-50 rounded-lg max-w-[300px];
+  }
+  .tabs-boxed .tab-active {
+    @apply bg-slate-800 bg-opacity-50 text-slate-200 !important;
+  }
+  .chatRow {
+    @apply rounded-lg px-5 py-2 sm:py-3 text-sm flex items-center justify-center space-x-2 hover:bg-gray-700/70 cursor-pointer text-gray-300 transition-all duration-200 ease-out;
+  }
+
+  .box_shadow {
+    -webkit-box-shadow: 4px -28px 48px 15px rgba(52, 53, 65, 0.8);
+    -moz-box-shadow: 4px -28px 48px 15px rgba(52, 53, 65, 0.8);
+    box-shadow: 4px -28px 48px 15px rgba(52, 53, 65, 0.8);
+  }
+
+  .message {
+    line-height: 50px;
+    letter-spacing: 0.08rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+
+  .hide__scroll__bar::-webkit-scrollbar {
+    -webkit-appearance: none;
+    appearance: none;
+    display: none;
+  }
+}
+
+.pointer_none * {
+  pointer-events: none;
+}
+
+.blink {
+  width: 3px;
+  display: inline-block;
+  animation: blink 1s infinite;
+  background-color: rgb(156 163 175);
+}
+
+@keyframes blink {
+  49% {
+    background-color: rgb(156 163 175);
+  }
+  50%,
+  99% {
+    background-color: transparent;
+  }
+}
+
+
+@media (max-width: 991.98px) {
+  .aside .aside-secondary .aside-workspace {
+    width: 100% !important;
+      flex-shrink: 0;
+  }
+
+  .aside-secondary-enabled .aside {
+    width: 100% !important;
+    z-index: 100;
+    position: absolute;
+}
+
+.customElipsis{
+
+  white-space: nowrap; 
+  width: 200px; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+}
+}   
+
+.customElipsis{
+
+  white-space: nowrap; 
+  width: 159px; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+}
+
+.hideaftericon.dropdown-toggle::after {
+  display:none;
+  margin-left: 0;
+  vertical-align: 0;
+  content: "";
+  border-top: 0.3em solid;
+  border-right: 0.3em solid transparent;
+  border-bottom: 0;
+  border-left: 0.3em solid transparent;
+}
+.dropDownCustomButtomPadding{
+  padding: 7px 10px 4px 4px !important;
+}
+
+
+.popover-dropdown {
+  position: relative;
+  display: inline-block;
+  margin-top: 20px;
+}
+
+.popover-trigger {
+  cursor: pointer;
+  padding: 8px;
+  border: 1px solid #ccc;
+}
+
+.trigger-icon {
+  margin-left: 5px;
+}
+
+.popover-content {
+  position: absolute;
+  top: calc(100% + 5px);
+  right: 0;
   
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+}
+
+.options-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+}
+
+.options-list li {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.options-list li:hover {
+  background-color: #f0f0f0;
+}
+@media (max-width: 991.98px) {
+  .popover-content {
+    position: absolute;
+    top: calc(100% + 5px);
+    right: calc(100% + 5px);
+    
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+  }
+
+}
+
+
+@media (max-width: 991.98px) {
+  .header .page-title {
+      display: block !important;
+  }
+}

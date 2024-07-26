@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import { createClient } from '@/utils/supabase/client'
+import { createBrowserClient } from '@supabase/ssr'
 import Image from 'next/image'
 
 export default function Avatar({
@@ -14,7 +14,11 @@ export default function Avatar({
   size: number
   onUpload: (url: string) => void
 }) {
-  const supabase = createClient()
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+
   const [avatarUrl, setAvatarUrl] = useState<string | null>(url)
   const [uploading, setUploading] = useState(false)
 
@@ -69,15 +73,18 @@ export default function Avatar({
           width={size}
           height={size}
           src={avatarUrl}
-          alt="Avatar"
-          className="avatar image"
+          alt='Avatar'
+          className='image-input image-input-outline border border-gray-300 border-dashed rounded text-center p-2 px- mb-2'
           style={{ height: size, width: size }}
         />
       ) : (
-        <div className="avatar no-image" style={{ height: size, width: size }} />
+        <div
+          className='image-input image-input-outline border border-gray-300 border-dashed rounded text-center p-2 px- mb-2'
+          style={{ height: size, width: size }}
+        />
       )}
       <div style={{ width: size }}>
-        <label className="button primary block" htmlFor="single">
+        <label className='btn btn-primary btn-sm block' htmlFor='single'>
           {uploading ? 'Uploading ...' : 'Upload'}
         </label>
         <input
@@ -85,9 +92,9 @@ export default function Avatar({
             visibility: 'hidden',
             position: 'absolute',
           }}
-          type="file"
-          id="single"
-          accept="image/*"
+          type='file'
+          id='single'
+          accept='image/*'
           onChange={uploadAvatar}
           disabled={uploading}
         />
