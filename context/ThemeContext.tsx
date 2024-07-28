@@ -54,6 +54,7 @@ export const ThemeProvider = ({ children }: any) => {
   const [closeSideBar, setcloseSideBar] = useState(true)
   const [selectedChat, setselectedChat] = useState('')
   const [selectedFolder, setselectedFolder] = useState('')
+  const [selectedProfileImage, setselectedProfileImage] = useState('')
   // Function to toggle theme
   const setOpenAiKey = (val: any) => {
     setopen_api_key(val)
@@ -166,6 +167,8 @@ export const ThemeProvider = ({ children }: any) => {
         setSideBar,
         folderSelect,
         chatSelect,
+        selectedProfileImage,
+        setselectedProfileImage,
       }}
     >
       {children}

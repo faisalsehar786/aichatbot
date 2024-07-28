@@ -1,4 +1,3 @@
-/* eslint-disable  */
 'use client'
 import Link from 'next/link'
 import { useUser } from '@/lib/store/user'
@@ -7,10 +6,18 @@ import { useRouter } from 'next/navigation'
 import useDarkMode from '@/hooks/useDarkMode'
 import React, { useState, useEffect, useRef } from 'react'
 import { useTheme } from '@/context/ThemeContext'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/popover'
 import ModelDropDown from '@/components/ModelDropDown'
 
 export default function Topbar() {
-  const { closeSideBar, setSideBar, ai_version, setVersion } = useTheme()
+  const {
+    closeSideBar,
+    setSideBar,
+    ai_version,
+    setVersion,
+    selectedProfileImage,
+    setselectedProfileImage,
+  } = useTheme()
   const [theme, setTheme] = useDarkMode()
   const router = useRouter()
   const gptModel = ['gpt-3.5-turbo', 'gpt-4']
@@ -36,7 +43,9 @@ export default function Topbar() {
         }
 
         const url = URL.createObjectURL(data)
+
         setAvatarUrl(url)
+        setselectedProfileImage(url)
       } catch (error) {
         console.log('Error downloading image: ', error)
       }
@@ -47,7 +56,7 @@ export default function Topbar() {
 
   // useEffect(() => {
   //   const handleClickOutside = (event: any) => {
-  //     if (dropdownRef.current) {
+  //     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
   //       setIsOpen(false)
   //     }
   //   }
@@ -73,29 +82,29 @@ export default function Topbar() {
     setIsOpen(false) // Close dropdown after selection
   }
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const element: any = window.document.getElementById('kt_body')
-      const element2: any = window.document.getElementById('aside-secondary-fs')
-      const element3: any = window.document.getElementById('aside-primary-fs')
+  // useEffect(() => {
+  //   if (typeof window !== 'undefined') {
+  //     const element: any = window.document.getElementById('kt_body')
+  //     const element2: any = window.document.getElementById('aside-secondary-fs')
+  //     const element3: any = window.document.getElementById('aside-primary-fs')
 
-      if (closeSideBar) {
-        element3.classList.add('show')
-        element3.classList.remove('d-none')
+  //     if (closeSideBar) {
+  //       element3.classList.add('show')
+  //       element3.classList.remove('d-none')
 
-        element2.classList.add('show')
-        element2.classList.remove('d-none')
-        element.classList.add('aside-secondary-enabled')
-      } else {
-        element3.classList.remove('show')
-        element3.classList.add('d-none')
+  //       element2.classList.add('show')
+  //       element2.classList.remove('d-none')
+  //       element.classList.add('aside-secondary-enabled')
+  //     } else {
+  //       element3.classList.remove('show')
+  //       element3.classList.add('d-none')
 
-        element2.classList.remove('show')
-        element2.classList.add('d-none')
-        element.classList.remove('aside-secondary-enabled')
-      }
-    }
-  }, [closeSideBar])
+  //       element2.classList.remove('show')
+  //       element2.classList.add('d-none')
+  //       element.classList.remove('aside-secondary-enabled')
+  //     }
+  //   }
+  // }, [closeSideBar])
 
   return (
     <div
@@ -117,7 +126,7 @@ export default function Topbar() {
         ></div>
 
         <div className='d-flex'>
-          <div className='form-check form-check-solid form-switch form-check-custom fv-row me-3'>
+          {/* <div className='form-check form-check-solid form-switch form-check-custom fv-row me-3'>
             <input
               className='form-check-input w-35px h-20px'
               type='checkbox'
@@ -126,7 +135,7 @@ export default function Topbar() {
               onClick={(e: any) => setSideBar(e.target.checked)}
             />
             <label className='form-check-label' htmlFor='allowmarketing' />
-          </div>
+          </div> */}
           {user ? (
             <>
               {/* <div
@@ -148,19 +157,37 @@ export default function Topbar() {
               </div> */}
               <ModelDropDown></ModelDropDown>
 
-              <div className='popover-dropdown mt-0' ref={dropdownRef}>
-                <div onClick={toggleDropdown} className='cursor-pointer symbol symbol-40px'>
-                  <img src={avatarUrl ? avatarUrl : 'assets/media/avatars/blank.png'} alt='image' />
-                </div>
+              <Popover>
+                <PopoverTrigger>
+                  <div className='cursor-pointer symbol symbol-40px'>
+                    <img
+                      src={
+                        selectedProfileImage
+                          ? selectedProfileImage
+                          : 'assets/media/avatars/blank.png'
+                      }
+                      alt='image'
+                    />
+                  </div>
+                </PopoverTrigger>
 
-                {isOpen && (
-                  <div className='popover-content border-0 menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg menu-state-color fw-semibold py-4 fs-6 w-275px show'>
+                <PopoverContent
+                  className={` ${
+                    isOpen ? 'd-block' : 'd-none'
+                  } space-y-3 divide-y p-2  border-0 menu menu-sub menu-sub-dropdown menu-column menu-rounded px-1 menu-gray-800 menu-state-bg menu-state-color fw-semibold py-4 fs-6 `}
+                  side='bottom'
+                >
+                  <div className=''>
                     <div className='menu-item px-3'>
                       <div className='menu-content d-flex align-items-center px-3'>
                         <div className='symbol symbol-50px me-5'>
                           <img
                             alt='Logo'
-                            src={avatarUrl ? avatarUrl : 'assets/media/avatars/blank.png'}
+                            src={
+                              selectedProfileImage
+                                ? selectedProfileImage
+                                : 'assets/media/avatars/blank.png'
+                            }
                           />
                         </div>
                         <div className='d-flex flex-column'>
@@ -195,8 +222,8 @@ export default function Topbar() {
                       </a>
                     </div>
                   </div>
-                )}
-              </div>
+                </PopoverContent>
+              </Popover>
             </>
           ) : (
             <div className='d-flex ms-3'>

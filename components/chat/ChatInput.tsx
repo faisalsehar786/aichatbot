@@ -1,17 +1,20 @@
 'use client'
 import React, { FormEvent, useEffect, useRef, useState } from 'react'
 import { Configuration, OpenAIApi } from 'openai'
+import axios from 'axios'
 import { useTheme } from '@/context/ThemeContext'
 import toast from 'react-hot-toast'
 import { useUser } from '@/lib/store/user'
 import Spinner from 'react-bootstrap/Spinner'
+import { davinci } from '@/ai_actions/davinci'
+import { dalle } from '@/ai_actions/dalle'
 
 type Props = {
   chatId: string
 }
 
 const ChatInput = ({ chatId }: Props) => {
-  const { ai_model } = useTheme()
+  const { ai_model, selectedProfileImage } = useTheme()
   const [prompt, setPrompt] = useState('')
   const [thinking, setThinking] = useState(false)
   const user = useUser((state) => state.user)
@@ -42,21 +45,29 @@ const ChatInput = ({ chatId }: Props) => {
       // await addMessage(user?.email!, chatId, userMessage); send to server
       setPrompt('')
       const apiKey = user?.ai_key ? user?.ai_key : process.env.NEXT_PUBLIC_OPENAI_API_KEY
-      const configuration = new Configuration({
-        apiKey: apiKey,
-      })
-      const openai = new OpenAIApi(configuration)
-      const response = await openai.createCompletion({
-        model: ai_model,
-        prompt,
-        temperature: 0.9,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0,
-        max_tokens: 2048,
-      })
 
-      console.log(response?.data?.choices[0])
+      const { data } = await axios.post(
+        `https://api.openai.com/v1/chat/completions`,
+        {
+          messages: [{ role: 'user', content: prompt }],
+          model: ai_model,
+          temperature: 0.9,
+          top_p: 1,
+          frequency_penalty: 0,
+          presence_penalty: 0,
+          max_tokens: 2048,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+
+      console.log(data)
+      data.choices[0].text
+
       setThinking(false)
 
       toast.success('ChatGPT just replied clone', {
@@ -65,9 +76,10 @@ const ChatInput = ({ chatId }: Props) => {
 
       // await addMessage(user?.email!, chatId, gptMessage); send to server
     } catch (error: any) {
-      console.log(JSON.stringify(error))
+      console.error('Error interacting with OpenAI:', error)
+      console.log(error?.message)
       setThinking(false)
-      toast.error(JSON.stringify(error), {
+      toast.error(error?.message, {
         id: notification!,
       })
     }
@@ -94,9 +106,6 @@ const ChatInput = ({ chatId }: Props) => {
       <div ref={formInputRef} className='sticky'>
         <form onSubmit={(e: any) => sendMessage(e)}>
           <div className='d-flex align-items-center bg-light border p-3 rounded'>
-            <div className='symbol symbol-35px me-3'>
-              <img src='assets/media/avatars/300-3.jpg' alt='' />
-            </div>
             <div className='position-relative w-100'>
               <textarea
                 className='form-control form-control-solid border ps-5'
@@ -114,7 +123,7 @@ const ChatInput = ({ chatId }: Props) => {
                 }}
               />
               <div className='position-absolute top-3 end-3 translate-middle-x mt-1 me-n14'>
-                {/* <button className='btn btn-icon btn-sm btn-color-gray-500 btn-active-color-primary w-25px p-0'>
+                <button className='btn btn-icon btn-sm btn-color-gray-500 btn-active-color-primary w-25px p-0'>
                   <i className='ki-duotone ki-paper-clip fs-2 text-primary' />
                 </button>
 
@@ -123,7 +132,7 @@ const ChatInput = ({ chatId }: Props) => {
                     <span className='path1' />
                     <span className='path2' />
                   </i>
-                </button> */}
+                </button>
                 <button
                   type='submit'
                   className='btn btn-sm btn-light '

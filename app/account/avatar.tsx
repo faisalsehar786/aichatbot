@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
 import Image from 'next/image'
-
+import { useTheme } from '@/context/ThemeContext'
 export default function Avatar({
   uid,
   url,
@@ -21,7 +21,14 @@ export default function Avatar({
 
   const [avatarUrl, setAvatarUrl] = useState<string | null>(url)
   const [uploading, setUploading] = useState(false)
-
+  const {
+    closeSideBar,
+    setSideBar,
+    ai_version,
+    setVersion,
+    selectedProfileImage,
+    setselectedProfileImage,
+  } = useTheme()
   useEffect(() => {
     async function downloadImage(path: string) {
       try {
@@ -32,6 +39,7 @@ export default function Avatar({
 
         const url = URL.createObjectURL(data)
         setAvatarUrl(url)
+        setselectedProfileImage(url)
       } catch (error) {
         console.log('Error downloading image: ', error)
       }

@@ -121,7 +121,9 @@
 
 import { MdComputer, MdPerson } from 'react-icons/md'
 import Markdown from './Markdown'
+import { useTheme } from '@/context/ThemeContext'
 const Message = (props: any) => {
+  const { ai_model, selectedProfileImage } = useTheme()
   const { id, createdAt, text, ai = false, selected } = props.message
 
   return (
@@ -162,8 +164,13 @@ const Message = (props: any) => {
                     You
                   </a>
                 </div>
-                <div className='symbol symbol-50px  '>
-                  <img alt='Pic' src='assets/media/avatars/300-1.jpg' />
+                <div className='symbol symbol-40px  '>
+                  <img
+                    alt='Pic'
+                    src={
+                      selectedProfileImage ? selectedProfileImage : 'assets/media/avatars/blank.png'
+                    }
+                  />
                 </div>
               </div>
               <div

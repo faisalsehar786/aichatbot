@@ -1,7 +1,27 @@
+'use client'
 import Sidebar from './Sidebar'
 import Topbar from './Topbar'
 import Aside from './Aside'
+import { useUser } from '@/lib/store/user'
+import { useEffect } from 'react'
+import { useRouter, usePathname } from 'next/navigation'
+import { redirect } from 'next/navigation'
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const user = useUser((state) => state.user)
+  const router = useRouter()
+  const pathname = usePathname()
+
+  const whenUserNotLogin = ['/login', '/signup', 'forgot-pass']
+  const whenUserLogin = ['/', 'chat', '/chatmanger', '/subscription', '/account']
+
+  useEffect(() => {
+    if (user && whenUserNotLogin.includes(pathname)) {
+      router.push('/')
+    }
+    if (!user && whenUserLogin.includes(pathname)) {
+      router.push('/login')
+    }
+  }, [router, user])
   return (
     <>
       <div

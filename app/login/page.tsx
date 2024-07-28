@@ -5,13 +5,11 @@ import { useFormik } from 'formik'
 import { useState, useEffect } from 'react'
 import * as Yup from 'yup'
 import Link from 'next/link'
-import Image from 'next/image'
 import { useRouter, usePathname } from 'next/navigation'
 import { signInWithEmailAndPassword } from './actions'
 import { createBrowserClient } from '@supabase/ssr'
 import toast from 'react-hot-toast'
 import { useUser } from '@/lib/store/user'
-import { redirect } from 'next/navigation'
 const loginSchema = Yup.object().shape({
   email: Yup.string()
     .email('Wrong email format')
@@ -47,10 +45,6 @@ export default function LoginPage() {
         password: `${JSON.parse(value)?.password || ''}`,
         rememberPassword: JSON.parse(value)?.rememberPassword,
       })
-    }
-
-    if (user) {
-      return redirect('/')
     }
   }, [])
 
@@ -252,7 +246,7 @@ export default function LoginPage() {
                 </label>
                 <div className='fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback' />
               </div>
-              <Link href='forgot-password' className='link-primary fw-semibold '>
+              <Link href='/forgot-pass' className='link-primary fw-semibold '>
                 Forgot Password
               </Link>
               <div className='d-grid my-5'>

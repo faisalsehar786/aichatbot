@@ -241,7 +241,7 @@ export default function ChatManger() {
         }
         handleClose()
 
-        toast.success('Chat Moved To Folder Successfully')
+        toast.success('Chat Copy To Folder Successfully')
         fetchData()
         setLoading(false)
       } catch (error: any) {
@@ -299,6 +299,39 @@ export default function ChatManger() {
       {icon && <span className='ml-2'>{icon}</span>}
     </Dropdown.Toggle>
   )
+
+  const moveToMAinChat = async (id: any) => {
+    if (id) {
+      setLoading(true)
+      try {
+        const { error } = await supabase
+          .from('chats')
+          .update({ folder_id: null, move: false })
+          .eq('id', id)
+          .select()
+
+        if (error) {
+          setLoading(false)
+          handleClose()
+
+          toast.error('something Went wrong try again or unauthorized User please login!')
+          return
+        }
+        handleClose()
+
+        toast.success('Chat Moved To Main Chats  Successfully')
+        fetchData()
+        setLoading(false)
+      } catch (error: any) {
+        toast.error(error.message)
+        setLoading(false)
+      }
+    } else {
+      handleClose()
+
+      toast.error('Select Chat and Folder Again Please !')
+    }
+  }
 
   return (
     <Layout>
@@ -507,7 +540,9 @@ export default function ChatManger() {
                             >
                               Move Or Copy To Other Folders
                             </Dropdown.Item>
-                            <Dropdown.Item href='#'>Move To Default Chat</Dropdown.Item>
+                            <Dropdown.Item href='#' onClick={() => moveToMAinChat(item?.id)}>
+                              Move To Default Chat
+                            </Dropdown.Item>
                             <Dropdown.Item
                               href='#'
                               onClick={() => {

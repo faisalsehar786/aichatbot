@@ -64,7 +64,9 @@ export default function ReSetPassword({
           setStatus(error.message)
           toast.error(error.message)
           setLoading(false)
-          router.push(`/forgot-password`)
+          setStatus(
+            'The information you have provided is incorrect.Or Somthing Whent Wrong Please try again '
+          )
           return
         }
         await supabase.auth.signOut()

@@ -2,6 +2,7 @@
 import Layout from './../components/Layout'
 import React from 'react'
 import { useTheme } from '@/context/ThemeContext'
+import { useUser } from '@/lib/store/user'
 export default function Home() {
   const { ai_version, setVersion } = useTheme()
   const gptModel = ['gpt-3.5-turbo', 'gpt-4']

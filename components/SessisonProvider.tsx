@@ -25,6 +25,14 @@ export default function SessisonProvider() {
         .eq('id', userSesssion.session?.user.id)
         .single()
 
+      if (userSesssion.session?.user?.email != data.email) {
+        await supabase
+          .from('profiles')
+          .update({ email: userSesssion.session?.user?.email })
+          .eq('id', userSesssion.session?.user.id)
+          .select()
+      }
+
       data.email = userSesssion.session?.user?.email
       setUser(data)
     }

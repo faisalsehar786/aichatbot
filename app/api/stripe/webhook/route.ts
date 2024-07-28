@@ -8,7 +8,6 @@ const endpointSecret = process.env.STRIPE_ENDPOINT_SECRET!;
 const stripe = new Stripe(process.env.STRIPE_SK_KEY!);
 
 export async function POST(req: any) {
-
 	
 	const rawBody = await buffer(req.body);
 	try {
@@ -20,7 +19,7 @@ export async function POST(req: any) {
 				sig!,
 				endpointSecret
 			);
-			console.log('event',event.type)
+			
 
 		} catch (err: any) {
 			return Response.json({ error: `Webhook Error ${err?.message!} ` });
@@ -28,9 +27,12 @@ export async function POST(req: any) {
 		switch (event.type) {
 			case "customer.subscription.deleted":
 				const deleteSubscription = event.data.object;
+
+				
 				await onCacnelSubscription(
 					deleteSubscription.status === "active",
-					deleteSubscription.id
+					deleteSubscription.id,
+					deleteSubscription
 				);
 				break;
 			case "customer.updated":
@@ -40,11 +42,17 @@ export async function POST(req: any) {
 				});
 				if (subscription.data.length) {
 					const sub = subscription.data[0];
+
+					
 					await onSuccessSubscription(
+
 						sub.id,
 						customer.id,
 						sub.status === "active",
-						customer.email!
+						customer.email!,
+						sub.current_period_start,
+						sub.current_period_end,
+						sub
 					);
 				}
 			default:
@@ -60,31 +68,58 @@ const onSuccessSubscription = async (
 	subscription_id: string,
 	customer_id: string,
 	status: boolean,
-	email: string
+	email: string,
+	current_period_start:any,
+	current_period_end:any,
+	sub:any
 ) => {
+
+	const makeTimeStemp=(unixTimestamp:any)=>{
+		const currentPeriodStart = new Date(unixTimestamp * 1000).toISOString();
+		
+		return currentPeriodStart
+		
+			}
 	const supabase = await createSupbaseAdmin();
 	const { data } = await supabase
-		.from("users")
+		.from("profiles")
 		.update({
 			stripe_subscriptoin_id: subscription_id,
 			stripe_customer_id: customer_id,
 			subscription_status: status,
+			subscription_start:makeTimeStemp(current_period_start),
+			subscription_end:makeTimeStemp(current_period_end),
 		})
 		.eq("email", email)
-		.select("id")
+		.select("id")  
 		.single();
+
+		await supabase
+		.from("subscriptions")
+		.insert({
+			stripe_subscriptoin_id:subscription_id,
+			user_id: data?.id,
+			plan_id: sub?.plan?.product,
+			start_date: makeTimeStemp(current_period_start),
+			end_date:makeTimeStemp(current_period_end),
+			payment_status:'success',
+			plan:sub?.plan
+			
+		}).select()     
+		
 	await supabase.auth.admin.updateUserById(data?.id!, {
 		user_metadata: { stripe_customer_id: null },
 	});
 };
-
+   
 const onCacnelSubscription = async (
 	status: boolean,
-	subscription_id: string
+	subscription_id: string,
+	deleteSubscription:any
 ) => {
 	const supabase = await createSupbaseAdmin();
 	const { data, error } = await supabase
-		.from("users")
+		.from("profiles")
 		.update({
 			stripe_subscriptoin_id: null,
 			stripe_customer_id: null,
@@ -94,6 +129,18 @@ const onCacnelSubscription = async (
 		.select("id")
 		.single();
 
+
+		await supabase
+		.from("subscriptions")
+		.update({
+			payment_status:'canceled',
+			plan:deleteSubscription?.plan
+		})
+		.eq("stripe_subscriptoin_id", subscription_id)
+		.select("id")
+		.single();
+	
+
 	await supabase.auth.admin.updateUserById(data?.id!, {
 		user_metadata: { stripe_customer_id: null },
 	});
@@ -101,15 +148,4 @@ const onCacnelSubscription = async (
 
 
 
-// To handle a GET request to /api
-// export async function GET(request:any) {
-//   // Do whatever you want
-//   return NextResponse.json({ message: "Hello World" }, { status: 200 });
-// }
-
-// To handle a POST request to /api
-// export async function POST(request:any) {
-//   // Do whatever you want
-//   return NextResponse.json({ message: "Hello World" }, { status: 200 });
-// }
 

@@ -29,6 +29,10 @@ export default function SideBarChats(props: any) {
   const [folders, setfolders] = useState<any>([])
   const [folderId, setfolderId] = useState<any>('')
   const [chatId, setchatId] = useState<any>('')
+  const [page, setPage] = useState(0)
+  const [hasMore, setHasMore] = useState(true)
+  const [total, setTotal] = useState<any>(0)
+  const PAGE_SIZE = 100
   const handleClose = () => setShow(false)
 
   const [showA, setShowA] = useState(false)
@@ -73,30 +77,29 @@ export default function SideBarChats(props: any) {
     try {
       let query = supabase
         .from('chats')
-        .select('*')
+        .select('*', { count: 'exact' })
         .eq('user_id', user?.id)
         .eq('move', false)
-        .order('created_at', { ascending: false })
-      // Check order query parameter and apply sorting
+
       if (searchTasks) {
         query = query.ilike('name', `%${searchTasks}%`)
       }
 
-      const { data: chats, error } = await query
+      const { data, error, count } = await query.range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1)
 
       if (error) {
-        toast.error('something Went wrong try again or unauthorized User please login!')
+        console.error('Error fetching posts:', error)
         return
       }
-      setTasks(chats)
-
-      console.log(chats)
+      setTotal(count)
+      setTasks((prevTasks: any) => (page === 0 ? data : [...prevTasks, ...data]))
+      setHasMore(data.length === PAGE_SIZE)
     } catch (error: any) {
       console.error('Error fetching data:', error.message)
     }
   }
 
-  const subscriptionChat = supabase
+  supabase
     .channel('custom-all-channel')
     .on('postgres_changes', { event: '*', schema: 'public', table: 'chats' }, (payload) => {
       // console.log('Change received:', payload)
@@ -123,13 +126,7 @@ export default function SideBarChats(props: any) {
       // Fetch initial data when component mounts
       fetchData()
     }
-    // Set up real-time subscription for INSERT, UPDATE, DELETE
-
-    // Clean up subscription when component unmounts
-    // return () => {
-    //   subscriptionChat.unsubscribe()
-    // }
-  }, [searchTasks, user])
+  }, [searchTasks, user, page])
 
   const deleteTask = async (id: any) => {
     if (!user) {
@@ -238,7 +235,7 @@ export default function SideBarChats(props: any) {
         }
         handleClose()
 
-        toast.success('Chat Moved To Folder Successfully')
+        toast.success('Chat Copy To Folder Successfully')
         // fetchData()
         setLoading(false)
       } catch (error: any) {
@@ -267,7 +264,11 @@ export default function SideBarChats(props: any) {
 
     setfolders(folders)
   }
-
+  const handleLoadMore = () => {
+    if (hasMore) {
+      setPage((prevPage: any) => prevPage + 1)
+    }
+  }
   return (
     <>
       <div className='accordion accordion-icon-toggle'>
@@ -284,7 +285,7 @@ export default function SideBarChats(props: any) {
               ></i>
             </span>
             <h3 className='fs-7 fw-semibold mb-0 ms-4'>
-              Chats ({tasks?.length})
+              Chats ({total})
               {loading && <span className='spinner-border spinner-border-sm align-middle ms-2' />}
             </h3>
           </div>
@@ -300,7 +301,10 @@ export default function SideBarChats(props: any) {
                 <span className='path2' />
               </i>
               <input
-                onChange={(e: any) => setsearchTasks(e.target.value)}
+                onChange={(e: any) => {
+                  setPage(0)
+                  setsearchTasks(e.target.value)
+                }}
                 type='text'
                 className='search-input form-control form-control-solid ps-13 h-35px'
                 name='search chats'
@@ -482,6 +486,21 @@ export default function SideBarChats(props: any) {
                       </div>
                     </div>
                   ))}
+
+                {hasMore && (
+                  <div className=' text-center '>
+                    <button
+                      onClick={() => handleLoadMore()}
+                      type='button'
+                      className='btn btn-sm btn-icon h-20px btn-light btn-active-light-primary'
+                    >
+                      <i className='ki-duotone ki-down fs-3 m-0'>
+                        <span className='path1'></span>
+                        <span className='path2'></span>
+                      </i>
+                    </button>
+                  </div>
+                )}
               </>
             ) : (
               <div className='border border-gray-300 border-dashed rounded text-center py-3 px-4 mt-3 mb-3'>

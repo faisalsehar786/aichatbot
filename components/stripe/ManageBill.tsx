@@ -10,6 +10,7 @@ export default function ManageBill({ customerId }: { customerId: string }) {
   const [isPending, startTransition] = useTransition()
   const onSubmit = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault()
+
     startTransition(async () => {
       const data = JSON.parse(await manageBillingPortal(customerId))
       window.location.href = data.url
@@ -18,11 +19,12 @@ export default function ManageBill({ customerId }: { customerId: string }) {
 
   return (
     <form onSubmit={onSubmit}>
-      <span className='flex items-center gap-2'>
-        <AiOutlineLoading3Quarters />
-        Billing
-      </span>
-      <BackpackIcon />
+      <button
+        className='btn btn-sm btn-light btn-active-light-primary  me-2'
+        id='kt_account_billing_cancel_subscription_btn'
+      >
+        Cancel Subscription
+      </button>
     </form>
   )
 }

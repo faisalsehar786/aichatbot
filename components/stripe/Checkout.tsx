@@ -21,14 +21,14 @@ export default function Checkout() {
     })
   }
 
-  if (!user) {
-    return <div className='flex items-center justify-center h-96 gap-2'>Login to continue</div>
-  }
-
   return (
     <form onSubmit={handleCheckOut}>
-      <button className='ring-1 ring-green-500 p-10 rounded-md text-center' type='submit'>
-        <p className='text-sm text-gray-500'>Unlock all Daily blog contents</p>
+      <button
+        className='btn btn-sm btn-primary'
+        data-bs-toggle='modal'
+        data-bs-target='#kt_modal_upgrade_plan'
+      >
+        Upgrade Plan
       </button>
     </form>
   )

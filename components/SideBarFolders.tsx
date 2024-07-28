@@ -23,6 +23,10 @@ export default function SideBarFolders(props: any) {
   const [loading, setLoading] = useState(false)
   const [searchTasks, setsearchTasks] = useState<any>('')
   const [isDeleting, setisDeleting] = useState<any>('')
+  const [page, setPage] = useState(0)
+  const [hasMore, setHasMore] = useState(true)
+  const [total, setTotal] = useState<any>(0)
+  const PAGE_SIZE = 100
   const addTask = async () => {
     if (!user) {
       router.push('/login')
@@ -50,25 +54,21 @@ export default function SideBarFolders(props: any) {
   }
   const fetchData = async () => {
     try {
-      let query = supabase
-        .from('folders')
-        .select('*')
-        .eq('user_id', user?.id)
-        .order('created_at', { ascending: false })
-      // Check order query parameter and apply sorting
+      let query = supabase.from('folders').select('*', { count: 'exact' }).eq('user_id', user?.id)
+
       if (searchTasks) {
         query = query.ilike('name', `%${searchTasks}%`)
       }
 
-      const { data: folders, error } = await query
+      const { data, error, count } = await query.range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1)
 
       if (error) {
-        toast.error('something Went wrong try again or unauthorized User please login!')
+        console.error('Error fetching posts:', error)
         return
       }
-      setTasks(folders)
-
-      console.log(folders)
+      setTotal(count)
+      setTasks((prevTasks: any) => (page === 0 ? data : [...prevTasks, ...data]))
+      setHasMore(data.length === PAGE_SIZE)
     } catch (error: any) {
       console.error('Error fetching data:', error.message)
     }
@@ -94,17 +94,12 @@ export default function SideBarFolders(props: any) {
       }
     })
     .subscribe()
+
   useEffect(() => {
     if (user) {
-      // Fetch initial data when component mounts
       fetchData()
     }
-
-    // Clean up subscription when component unmounts
-    // return () => {
-    //   subscriptionfolder.unsubscribe()
-    // }
-  }, [searchTasks, user])
+  }, [searchTasks, user, page])
 
   const deleteTask = async (id: any) => {
     if (!user) {
@@ -162,7 +157,11 @@ export default function SideBarFolders(props: any) {
       setLoading(false)
     }
   }
-
+  const handleLoadMore = () => {
+    if (hasMore) {
+      setPage((prevPage: any) => prevPage + 1)
+    }
+  }
   return (
     <>
       <div className='accordion accordion-icon-toggle'>
@@ -179,7 +178,7 @@ export default function SideBarFolders(props: any) {
               ></i>
             </span>
             <h3 className='fs-7 fw-semibold mb-0 ms-4'>
-              Folders ({tasks?.length})
+              Folders ({total})
               {loading && <span className='spinner-border spinner-border-sm align-middle ms-2' />}
             </h3>
           </div>
@@ -201,7 +200,10 @@ export default function SideBarFolders(props: any) {
                     className='search-input form-control form-control-solid ps-13 h-35px'
                     name='search'
                     defaultValue=''
-                    onChange={(e: any) => setsearchTasks(e.target.value)}
+                    onChange={(e: any) => {
+                      setPage(0)
+                      setsearchTasks(e.target.value)
+                    }}
                     placeholder='Search Folder...'
                     data-kt-search-element='input'
                   />
@@ -277,7 +279,7 @@ export default function SideBarFolders(props: any) {
                       <div className='custom-list d-flex align-items-center p-2 my-3  rounded text-gray-800 text-hover-primary'>
                         <div className='d-flex flex-column flex-grow-1 '>
                           <span className='text-gray-800 text-hover-primary mb-1 customElipsis'>
-                            Are you sure !
+                            {item?.name}
                           </span>
                         </div>
 
@@ -383,6 +385,21 @@ export default function SideBarFolders(props: any) {
                     </div>
                   </div>
                 ))}
+
+                {hasMore && (
+                  <div className=' text-center '>
+                    <button
+                      onClick={() => handleLoadMore()}
+                      type='button'
+                      className='btn btn-sm btn-icon h-20px btn-light btn-active-light-primary'
+                    >
+                      <i className='ki-duotone ki-down fs-3 m-0'>
+                        <span className='path1'></span>
+                        <span className='path2'></span>
+                      </i>
+                    </button>
+                  </div>
+                )}
               </>
             ) : (
               <div className='border border-gray-300 border-dashed rounded text-center py-3 px-4 mt-3 mb-3'>

@@ -5,13 +5,10 @@ import { useFormik } from 'formik'
 import { useState, useEffect } from 'react'
 import * as Yup from 'yup'
 import Link from 'next/link'
-import Image from 'next/image'
 import { useRouter, usePathname } from 'next/navigation'
 import { signUpWithEmailAndPassword } from './actions'
-import { createBrowserClient } from '@supabase/ssr'
 import toast from 'react-hot-toast'
 import { useUser } from '@/lib/store/user'
-import { redirect } from 'next/navigation'
 const loginSchema = Yup.object().shape({
   email: Yup.string()
     .email('Wrong email format')
@@ -53,10 +50,6 @@ export default function SignUp() {
         password: `${JSON.parse(value)?.password || ''}`,
         rememberPassword: JSON.parse(value)?.rememberPassword,
       })
-    }
-
-    if (user) {
-      return redirect('/')
     }
   }, [])
 
@@ -133,11 +126,6 @@ export default function SignUp() {
       }
     },
   })
-
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
 
   return (
     <Layout>
