@@ -16,7 +16,23 @@ export default function Subscription() {
   const [folders, setFolders] = useState<any>(0)
   const [chats, setChats] = useState<any>(0)
   const [transacations, settransacations] = useState<any>([])
+  const [parseObj, setparseObj] = useState<any>({})
 
+  const retrunParseLoop = (obj: any) => {
+    try {
+      return JSON.parse(obj)
+    } catch (error: any) {
+      return {}
+    }
+  }
+
+  const retrunParse = (obj: any) => {
+    try {
+      setparseObj(JSON.parse(obj))
+    } catch (error: any) {
+      return {}
+    }
+  }
   const fetchData = async () => {
     const { count } = await supabase
       .from('chats') // Replace with your actual table name
@@ -40,14 +56,36 @@ export default function Subscription() {
 
   useEffect(() => {
     if (user) {
+      retrunParse(user?.stripe_sechma)
+
       fetchData()
     }
   }, [user])
+
+  function convertTimestampToDate(timestamp: any) {
+    return moment.unix(timestamp).format('YYYY-MM-DD HH:mm')
+  }
+
+  // Function to check subscription status
+  function checkSubscriptionStatus(currentPeriodEnd: any) {
+    // Get the current date and time in Unix timestamp format
+    const currentDate = moment()
+
+    // Convert current_period_end to a moment object
+    const endDate = moment.unix(currentPeriodEnd)
+
+    // Compare current date with current_period_end date
+    if (currentDate.isAfter(endDate)) {
+      return false
+    } else {
+      return true
+    }
+  }
   return (
     <Layout>
       <div className='card mb-5 mb-xl-10 border border-gray-300 border-dashed'>
         <div className='card-body'>
-          {user?.subscription_status && new Date() <= new Date(user?.subscription_end) ? (
+          {user?.subscription_status && checkSubscriptionStatus(parseObj.current_period_end) ? (
             <>
               <div className='notice d-flex bg-light-primary rounded border-primary border border-dashed mb-12 p-6'>
                 <i className='ki-duotone ki-information fs-2tx text-warning me-4'>
@@ -68,13 +106,15 @@ export default function Subscription() {
               <div className='row'>
                 <div className='col-lg-7'>
                   <h3 className='mb-2'>
-                    Active Date {moment(user?.subscription_start).calendar()}
+                    Active Date {convertTimestampToDate(parseObj.current_period_start)}
                   </h3>
                   <p className='fs-6 text-gray-600 fw-semibold mb-6 mb-lg-15'>
                     Subscription Start Date
                   </p>
 
-                  <h3 className='mb-2'>Active until {moment(user?.subscription_end).calendar()}</h3>
+                  <h3 className='mb-2'>
+                    Active until {convertTimestampToDate(parseObj.current_period_end)}
+                  </h3>
                   <p className='fs-6 text-gray-600 fw-semibold mb-6 mb-lg-15'>
                     Subscription End Date
                   </p>
@@ -110,7 +150,7 @@ export default function Subscription() {
                     ) : null}
 
                     {user?.subscription_status &&
-                    new Date() <= new Date(user?.subscription_end) ? null : (
+                    checkSubscriptionStatus(parseObj.current_period_end) ? null : (
                       <Checkout></Checkout>
                     )}
                   </div>
@@ -158,7 +198,7 @@ export default function Subscription() {
                     ) : null}
 
                     {user?.subscription_status &&
-                    new Date() <= new Date(user?.subscription_end) ? null : (
+                    checkSubscriptionStatus(parseObj.current_period_end) ? null : (
                       <Checkout></Checkout>
                     )}
                   </div>
@@ -183,7 +223,7 @@ export default function Subscription() {
                 <th>Status</th>
                 <th>Start</th>
                 <th className=''>Expire</th>
-                <th className='text-end'>Created At</th>
+                <th className='text-end'>Last Updated</th>
               </tr>
             </thead>
             <tbody className='fw-semibold text-gray-600'>
@@ -191,11 +231,26 @@ export default function Subscription() {
                 <tr key={item.id}>
                   <td>{user.full_name}</td>
                   <td>Paid</td>
-                  <td>{item?.payment_status}</td>
-                  <td>{moment(user?.start_date).calendar()}</td>
+                  <td>
+                    {item?.payment_status == 'success' ? (
+                      <div className='badge badge-light-success'>Sucess</div>
+                    ) : (
+                      <div className='badge badge-light-warning'>Cancel</div>
+                    )}
+                  </td>
+                  <td>
+                    {convertTimestampToDate(
+                      retrunParseLoop(item?.stripe_sechma)?.current_period_start
+                    )}
+                  </td>
 
-                  <td className=''>{moment(item?.end_date).calendar()}</td>
-                  <td className='text-end'>{moment(item?.created_at).calendar()}</td>
+                  <td className=''>
+                    {' '}
+                    {convertTimestampToDate(
+                      retrunParseLoop(item?.stripe_sechma)?.current_period_end
+                    )}
+                  </td>
+                  <td className='text-end'>{moment(item?.updated_at).calendar()}</td>
                 </tr>
               ))}
             </tbody>
