@@ -1,21 +1,21 @@
 import Stripe from "stripe";
 import { headers } from "next/headers";
 import { createSupbaseAdmin } from "@/lib/supabase";
-import { buffer } from 'micro';
-
+import { buffer } from "node:stream/consumers";
+import { NextResponse } from "next/server";
 const endpointSecret = process.env.STRIPE_ENDPOINT_SECRET!;
 
 const stripe = new Stripe(process.env.STRIPE_SK_KEY!);
 
 export async function POST(req: any) {
 	
-	const rawBody = await buffer(req.body);
+	const rawBody = JSON.stringify(req.body);
 	try {
 		const sig = headers().get("stripe-signature");
 		let event;
 		try {
 			event = stripe.webhooks.constructEvent(
-				rawBody.toString(),
+				rawBody,
 				sig!,
 				endpointSecret
 			);
