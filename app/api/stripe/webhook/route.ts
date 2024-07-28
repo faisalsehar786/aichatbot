@@ -2,14 +2,12 @@ import Stripe from "stripe";
 import { headers } from "next/headers";
 import { createSupbaseAdmin } from "@/lib/supabase";
 import { buffer } from "node:stream/consumers";
-import { NextResponse } from "next/server";
 const endpointSecret = process.env.STRIPE_ENDPOINT_SECRET!;
-
 const stripe = new Stripe(process.env.STRIPE_SK_KEY!);
-
 export async function POST(req: any) {
 	
-	const rawBody = JSON.stringify(req.body);
+	const rawBody = await buffer(req.body);
+
 	try {
 		const sig = headers().get("stripe-signature");
 		let event;
@@ -87,25 +85,25 @@ const onSuccessSubscription = async (
 			stripe_subscriptoin_id: subscription_id,
 			stripe_customer_id: customer_id,
 			subscription_status: status,
-			subscription_start:makeTimeStemp(current_period_start),
-			subscription_end:makeTimeStemp(current_period_end),
+			// subscription_start:makeTimeStemp(current_period_start),
+			// subscription_end:makeTimeStemp(current_period_end),
 		})
 		.eq("email", email)
 		.select("id")  
 		.single();
 
-		await supabase
-		.from("subscriptions")
-		.insert({
-			stripe_subscriptoin_id:subscription_id,
-			user_id: data?.id,
-			plan_id: sub?.plan?.product,
-			start_date: makeTimeStemp(current_period_start),
-			end_date:makeTimeStemp(current_period_end),
-			payment_status:'success',
-			plan:sub?.plan
+		// await supabase
+		// .from("subscriptions")
+		// .insert({
+		// 	stripe_subscriptoin_id:subscription_id,
+		// 	user_id: data?.id,
+		// 	plan_id: sub?.plan?.product,
+		// 	start_date: makeTimeStemp(current_period_start),
+		// 	end_date:makeTimeStemp(current_period_end),
+		// 	payment_status:'success',
+		// 	plan:sub?.plan
 			
-		}).select()     
+		// }).select()     
 		
 	await supabase.auth.admin.updateUserById(data?.id!, {
 		user_metadata: { stripe_customer_id: null },
@@ -130,15 +128,15 @@ const onCacnelSubscription = async (
 		.single();
 
 
-		await supabase
-		.from("subscriptions")
-		.update({
-			payment_status:'canceled',
-			plan:deleteSubscription?.plan
-		})
-		.eq("stripe_subscriptoin_id", subscription_id)
-		.select("id")
-		.single();
+		// await supabase
+		// .from("subscriptions")
+		// .update({
+		// 	payment_status:'canceled',
+		// 	plan:deleteSubscription?.plan
+		// })
+		// .eq("stripe_subscriptoin_id", subscription_id)
+		// .select("id")
+		// .single();
 	
 
 	await supabase.auth.admin.updateUserById(data?.id!, {
