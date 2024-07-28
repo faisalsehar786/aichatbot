@@ -6,7 +6,11 @@ import { NextResponse } from "next/server";
 const endpointSecret = process.env.STRIPE_ENDPOINT_SECRET!;
 
 const stripe = new Stripe(process.env.STRIPE_SK_KEY!);
-
+export const config = {
+	api: {
+	  bodyParser: false, // Disable body parsing
+	},
+  };
 export async function POST(req: any) {
 	
 	const rawBody = await buffer(req.body);
