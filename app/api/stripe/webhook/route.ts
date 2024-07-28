@@ -1,16 +1,12 @@
 import Stripe from "stripe";
 import { headers } from "next/headers";
 import { createSupbaseAdmin } from "@/lib/supabase";
-import { buffer } from "node:stream/consumers";
-import { NextResponse } from "next/server";
+import { buffer } from 'micro';
+
 const endpointSecret = process.env.STRIPE_ENDPOINT_SECRET!;
 
 const stripe = new Stripe(process.env.STRIPE_SK_KEY!);
-export const config = {
-	api: {
-	  bodyParser: false, // Disable body parsing
-	},
-  };
+
 export async function POST(req: any) {
 	
 	const rawBody = await buffer(req.body);
@@ -19,7 +15,7 @@ export async function POST(req: any) {
 		let event;
 		try {
 			event = stripe.webhooks.constructEvent(
-				rawBody,
+				rawBody.toString(),
 				sig!,
 				endpointSecret
 			);

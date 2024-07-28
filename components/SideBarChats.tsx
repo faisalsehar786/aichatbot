@@ -80,6 +80,7 @@ export default function SideBarChats(props: any) {
         .select('*', { count: 'exact' })
         .eq('user_id', user?.id)
         .eq('move', false)
+        .order('created_at', { ascending: false })
 
       if (searchTasks) {
         query = query.ilike('name', `%${searchTasks}%`)

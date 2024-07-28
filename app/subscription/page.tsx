@@ -15,6 +15,7 @@ export default function Subscription() {
   )
   const [folders, setFolders] = useState<any>(0)
   const [chats, setChats] = useState<any>(0)
+  const [transacations, settransacations] = useState<any>([])
 
   const fetchData = async () => {
     const { count } = await supabase
@@ -28,6 +29,13 @@ export default function Subscription() {
       .select('*', { count: 'exact' })
       .eq('user_id', user?.id)
     setChats(total)
+
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .select('*')
+      .eq('user_id', user?.id)
+      .order('created_at', { ascending: false })
+    settransacations(data)
   }
 
   useEffect(() => {
@@ -171,13 +179,26 @@ export default function Subscription() {
             <thead>
               <tr className='text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0'>
                 <th>Customer</th>
-                <th>Status</th>
                 <th>Billing</th>
-                <th>Created</th>
-                <th className='text-end'>Expire</th>
+                <th>Status</th>
+                <th>Start</th>
+                <th className=''>Expire</th>
+                <th className='text-end'>Created At</th>
               </tr>
             </thead>
-            <tbody className='fw-semibold text-gray-600'></tbody>
+            <tbody className='fw-semibold text-gray-600'>
+              {transacations?.map((item: any) => (
+                <tr key={item.id}>
+                  <td>{user.full_name}</td>
+                  <td>Paid</td>
+                  <td>{item?.payment_status}</td>
+                  <td>{moment(user?.start_date).calendar()}</td>
+
+                  <td className=''>{moment(item?.end_date).calendar()}</td>
+                  <td className='text-end'>{moment(item?.created_at).calendar()}</td>
+                </tr>
+              ))}
+            </tbody>
           </table>
         </div>
       </div>

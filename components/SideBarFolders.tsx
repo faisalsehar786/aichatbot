@@ -54,7 +54,11 @@ export default function SideBarFolders(props: any) {
   }
   const fetchData = async () => {
     try {
-      let query = supabase.from('folders').select('*', { count: 'exact' }).eq('user_id', user?.id)
+      let query = supabase
+        .from('folders')
+        .select('*', { count: 'exact' })
+        .eq('user_id', user?.id)
+        .order('created_at', { ascending: false })
 
       if (searchTasks) {
         query = query.ilike('name', `%${searchTasks}%`)
